@@ -1,0 +1,6 @@
+######################################################################################################################################
+## Main steps for ATAC-seq pipeline from adater trimming to generation of peak count matrix (excluding sample quality control)
+## INSERT CITATION + DOI
+## Sergio R. Llana 4/04/2024
+######################################################################################################################################
+

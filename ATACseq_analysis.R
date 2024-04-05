@@ -3,7 +3,7 @@
 ## INSERT CITATION + DOI
 ## DISCLAIMER: Manuscript figures may differ from the ones obtained with this code ONLY for enhancing visualization of final figures.
 ## Gene Ontology enrichment bubble plots were filtered to show non-redundant informative BP pathways.
-## Author: Sergio R. Llana
+## Sergio R. Llana 5/04/2024
 ######################################################################################################################################
 
 # IMPORTING PACKAGES ####################
@@ -21,8 +21,10 @@ library(circlize)
 
 # IMPORTING PEAK TABLES ####################
 
+# 0/1 matrix indicating presence of peaks
 overs <- read.table("consensus_overlaps.tsv",
                     header = T)
+# Peak count matrix
 counts <- read.table("consensus_counts.tsv",
                      header = T)
 # Keep peaks that appear in at least two samples
@@ -30,7 +32,7 @@ counts_clean <- counts[which(rowSums(overs[,4:ncol(overs)])>=2),]
 rownames(counts_clean) <- paste0(counts_clean$chr,":",counts_clean$start,"-",counts_clean$end)
 colnames(counts_clean) <- gsub(".THSS.bam", "", colnames(counts_clean))
 
-# Load metadatafile: Table containing information about each sample (e.g. diet)
+# Load metadata file: Table containing information about each sample (e.g. diet)
 enh <- readxl::read_xlsx("metadata.xlsx") %>%
   dplyr::arrange(ID) %>%
   select(-ID)
@@ -78,7 +80,7 @@ ggplot(pca.pivot) +
   aes(x=sample, y=loadings, fill=diet) + 
   geom_bar(stat="identity") +
   facet_wrap(~PC, labeller = labeller(PC = PC_tags)) +
-  labs(title="PCA 'small multiples' plot") +
+  labs(title="Individual PCs") +
   theme_bw() +
   coord_flip()
 
@@ -221,9 +223,9 @@ gostplot(gprofiler_open)
 gprofiler_open_bp <- gprofiler_open$result %>%
   filter(source == "GO:BP")
 
+# Subset pathways to remove GO terms redundancy (related to GO hierarchy)
 nervous_system <- c("sensory neuron axon guidance", "synapse organization", "neuron differentiation", "neurogenesis", "cell projection organization")
 digestive_tract <- c("embryonic digestive tract development", "embryonic digestive tract morphogenesis", "cell junction organization", "cell differentiation")
-#others <- c("mesenchymal stem cell maintenance involved in nephron morphogenesis", "chondrocyte differentiation", "cell population proliferation", "cell-cell signaling by wnt")
 
 # Create bubble plot
 gprofiler_open_bp %>%
@@ -269,7 +271,8 @@ gprofiler_closed_bp %>%
 
 ### Cirlcle plot for CLOSED regions' TF motifs
 
-# Pathways were inferred from GO annotations from Mouse Genome Informatics database
+# Pathways were inferred from GO annotations from Mouse Genome Informatics database. TFs were grouped accordingly.
+# Notice that Nfe2l2 corresponds to TF morif "ARE(NR)" and PPAR to TF motif "PPARE(NR),DR1"
 Cardio_dev <- c("ERG", "Foxh1", "Oct4:Sox17", "TR4", "Nfe2l2")
 Nerv_dev <- c("CUX1", "ETV1", "ETV4", "TR4", "bHLHE40", "Nfe2l2")
 Skeletal_muscle_dev <- c("Nur77", "Sox15")
@@ -293,7 +296,6 @@ TF_closed_grouped.df <- TF_closed_grouped %>% as.data.frame()
 
 
 #set q-value for the TFs (from HOMER results)
-# Notice that Nfe2l2 corresponds to TF morif "ARE(NR)" and PPAR to TF motif "PPARE(NR),DR1"
 qvals <- c("bHLHE40"=0.0303, "CUX1"=0.0303, "ERG"=0.0303, "ETV1"=0.0211, "ETV4"=0.0303, "Foxh1"=0.0303, "Nur77"=0.0303, "Nfe2l2"=0.0303,"PPAR"=0.0303,"Sox15"=0.0437, "Oct4:Sox17"=0.0016, "TR4"=0.0472)
 
 #define color range 
@@ -348,8 +350,9 @@ color.bar(colorRampPalette(c("darkblue", "#b9f8ff"))(99), min=0, max=0.05, ntick
 
 
 
-### Cirlcle plot for CLOSED regions' TF motifs
+### Cirlcle plot for OPEN regions' TF motifs
 
+# Note that Jun corresponds to TF motif "Jun-AP1(bZIP)"
 Dev_pro <- c("Egr2", "Jun", "NFIL3", "Npas4", "RUNX1", "Srebp1a", "Srebp2", "Tcfcp2l1", "Zic2", "Zic3", "ZNF143")
 Sig_stim <- c("Egr2", "IRF3", "Jun", "KLF14", "Npas4", "RUNX1", "Srebp1a")
 Metab <- c("Egr2", "Srebp1a", "Srebp2")
@@ -369,10 +372,9 @@ TF_open_grouped.df <- TF_open_grouped %>% as.data.frame()
 
 
 #set q-value for the TFs
-# Note that Jun corresponds to TF motif "Jun-AP1(bZIP)"
 qvals <- c("Egr2" = 0.0084, "IRF3" = 0.0176, "Jun" = 0.0190, "KLF14" = 0.0190, "NFIL3" = 0.0190, "Npas4" = 0.0089, "RUNX1" = 0.0112, "Srebp1a" = 0.0224, "Srebp2" = 	0.0190,  "Tcfcp2l1"= 	0.0084, "Zic2" = 0.0081, "Zic3" = 0.0000, "ZNF143" = 0.0042)
 
-ii <- cut(qvals, breaks = seq(min(qvals), 0.03, len = 100), 
+ii <- cut(qvals, breaks = seq(min(qvals), 0.03, len = 100), # set max = 0.03 to better distinguish q-val differences
           include.lowest = TRUE)
 colors <- colorRampPalette(c("darkblue", "#b9f8ff"))(99)[ii]
 names(colors) <- c("Egr2", "IRF3" , "Jun" , "KLF14", "NFIL3", "Npas4", "RUNX1", "Srebp1a", "Srebp2", "Tcfcp2l1", "Zic2", "Zic3", "ZNF143")
