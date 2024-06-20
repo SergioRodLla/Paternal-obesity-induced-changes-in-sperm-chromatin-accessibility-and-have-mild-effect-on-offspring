@@ -11,8 +11,8 @@ Generate `consensus_counts.tsv` and `consensus_overlaps.tsv` for ATAC-seq analys
 cat *peaks.narrowPeak | sort -k1,1 -k2,2n | bedtools merge > consensus_pe.bed
 
 #create counts per peak of consensus matrix per sample
-consensus_coverage.R -t 40 consensus_pe.bed <BAM files> > consensus_counts.tsv
+consensus_coverage.R -t 20 consensus_pe.bed <BAM files> > consensus_counts.tsv
 
 #create presense of peak (0/1) of consensus matrix per sample
-consensus_coverage.R -t 40 -m 1 consensus_pe.bed *peaks.narrowPeak > consensus_overlaps.tsv
+consensus_coverage.R -t 20 -m 1 consensus_pe.bed *peaks.narrowPeak > consensus_overlaps.tsv
 ```
