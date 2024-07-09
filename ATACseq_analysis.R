@@ -1,6 +1,6 @@
 ######################################################################################################################################
-## This R code was used to perform peak differential accessibility analysis and prepare inputs for HOMER TF motif analysis for
-## INSERT CITATION + DOI
+## This R code was used to perform peak differential accessibility analysis and prepare inputs for HOMER TF motif analysis
+## DOI: https://doi.org/10.1016/j.heliyon.2024.e34043
 ## DISCLAIMER: Manuscript figures may differ from the ones obtained with this code ONLY for enhancing visualization of final figures.
 ## Gene Ontology enrichment bubble plots were filtered to show non-redundant informative BP pathways.
 ## Sergio R. Llana 5/04/2024
